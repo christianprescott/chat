@@ -1,6 +1,5 @@
 class Api::ConversationsController < ApiController
   def index
-    current_user
-    render json: []
+    render json: current_user.conversations
   end
 end
