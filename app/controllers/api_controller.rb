@@ -11,7 +11,11 @@ class ApiController < ApplicationController
     render json: { error: e.message }, status: :not_found
   end
 
-  rescue_from ActionController::ParameterMissing, ActionController::BadRequest do |e|
+  rescue_from *[
+    ActiveRecord::RecordInvalid,
+    ActionController::ParameterMissing,
+    ActionController::BadRequest
+  ] do |e|
     render json: { error: e.message }, status: :bad_request
   end
 

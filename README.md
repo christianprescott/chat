@@ -5,7 +5,7 @@
 [x] List conversations for user
 [x] Create conversation with another user
 [x] List messages in conversation
-[ ] Create messages in conversation
+[x] Create messages in conversation
 [ ] Read status
 [ ] Announcements
 [ ] Multiple participants
@@ -28,7 +28,10 @@ one does not exist with that name.
 curl 'http://chat.docker/api/conversations?username=xXjulianXx'
 curl 'http://chat.docker/api/conversations?username=anth0ny'
 curl -X POST 'http://chat.docker/api/conversations?username=xXjulianXx&to=anth0ny'
-curl 'http://chat.docker/api/conversations/366/messages?username=xXjulianXx'
+curl -X POST 'http://chat.docker/api/conversations/$CONVERSATION_ID/messages?username=xXjulianXx' \
+  -H 'Content-Type: application/json' \
+  --data '{ "message": { "body": "would you accept half your list price?" } }'
+curl 'http://chat.docker/api/conversations/$CONVERSATION_ID/messages?username=anth0ny'
 ```
 
 ## Testing

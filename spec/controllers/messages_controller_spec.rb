@@ -27,4 +27,19 @@ RSpec.describe Api::MessagesController, type: :controller do
       expect(json.map { |c| c['id'] }).to eq [third.id, second.id, first.id]
     end
   end
+
+  describe '#create' do
+    it 'responds 404 if the user is not a participant in conversation' do
+      post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+      expect(response).to have_http_status :not_found
+    end
+
+    it 'creates message' do
+      create :participation, user: current_user, conversation: conversation
+      post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+      message = conversation.messages.order(created_at: :desc).first
+      expect(message.body).to eq 'shiny new message'
+      expect(message.user).to eq current_user
+    end
+  end
 end
