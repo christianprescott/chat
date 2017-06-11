@@ -4,7 +4,7 @@
 
 [x] List conversations for user
 [x] Create conversation with another user
-[ ] List messages in conversation
+[x] List messages in conversation
 [ ] Create messages in conversation
 [ ] Read status
 [ ] Announcements

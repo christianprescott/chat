@@ -7,12 +7,16 @@ class ApiController < ApplicationController
     render json: { error: e.message }, status: :unauthorized
   end
 
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: { error: e.message }, status: :not_found
+  end
+
   rescue_from ActionController::ParameterMissing, ActionController::BadRequest do |e|
     render json: { error: e.message }, status: :bad_request
   end
 
   def current_user
-    User.find_or_create_by!(name: current_username)
+    @current_user ||= User.find_or_create_by!(name: current_username)
   end
 
   private

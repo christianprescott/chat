@@ -1,35 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Api::ConversationsController, type: :controller do
-  shared_examples_for 'requires user' do
-    context 'without username' do
-      let(:current_username) { nil }
-
-      it 'responds 401' do
-        make_request
-        expect(response).to have_http_status :unauthorized
-      end
-    end
-
-    context 'with new username' do
-      let(:current_username) { 'newUser' }
-
-      it 'creates user' do
-        expect { make_request }.to change { User.count }.by 1
-        expect(response).to have_http_status :success
-      end
-    end
-
-    context 'with existing username' do
-      it 'responds 200 when username is present' do
-        expect { make_request }.not_to change { User.count }
-        expect(response).to have_http_status :success
-      end
-    end
-  end
-
   describe '#index' do
-    it_behaves_like 'requires user' do
+    it_behaves_like 'user authenticated resource' do
       def make_request; get :index; end
     end
 
@@ -45,7 +18,7 @@ RSpec.describe Api::ConversationsController, type: :controller do
   describe '#create' do
     let!(:recipient) { create :user }
 
-    it_behaves_like 'requires user' do
+    it_behaves_like 'user authenticated resource' do
       def make_request; post :create, params: { conversation: { to: recipient.name } }; end
     end
 
