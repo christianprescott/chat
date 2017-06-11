@@ -19,6 +19,18 @@ get started with `docker-compose up`.
 
 Run `rails db:create db:migrate` then start the server. `rails s`
 
+## Usage
+
+Provide the `username` param to requests to "authenticate." A user is created if
+one does not exist with that name.
+
+```sh
+curl 'http://chat.docker/api/conversations?username=xXjulianXx'
+curl 'http://chat.docker/api/conversations?username=anth0ny'
+curl -X POST 'http://chat.docker/api/conversations?username=xXjulianXx&to=anth0ny'
+curl 'http://chat.docker/api/conversations/366/messages?username=xXjulianXx'
+```
+
 ## Testing
 
 `rspec`

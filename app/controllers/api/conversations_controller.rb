@@ -10,7 +10,7 @@ class Api::ConversationsController < ApiController
     # be shallow routes on MessagesController to find_or_create the
     # conversation.
 
-    to_name = conversation_params[:to]
+    to_name = params[:to]
     raise ActionController::BadRequest, 'to is required' if to_name.blank?
     to_user = User.find_by(name: to_name)
     raise ActionController::BadRequest, 'recipient must exist' if to_user.blank?
@@ -20,11 +20,5 @@ class Api::ConversationsController < ApiController
     conversation.participations.create!(user: to_user)
     conversation.participations.create!(user: current_user)
     render json: conversation
-  end
-
-  private
-
-  def conversation_params
-    params.require(:conversation).permit(:to)
   end
 end

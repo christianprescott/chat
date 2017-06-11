@@ -19,7 +19,7 @@ RSpec.describe Api::ConversationsController, type: :controller do
     let!(:recipient) { create :user }
 
     it_behaves_like 'user authenticated resource' do
-      def make_request; post :create, params: { conversation: { to: recipient.name } }; end
+      def make_request; post :create, params: { to: recipient.name }; end
     end
 
     it 'requires to param' do
@@ -28,12 +28,12 @@ RSpec.describe Api::ConversationsController, type: :controller do
     end
 
     it 'requires non-sender to param' do
-      post :create, params: { conversation: { to: current_user.name } }
+      post :create, params: { to: current_user.name }
       expect(response).to have_http_status :bad_request
     end
 
     it 'requires existing to user' do
-      post :create, params: { conversation: { to: 'four_oh_four' } }
+      post :create, params: { to: 'four_oh_four' }
       expect(response).to have_http_status :bad_request
     end
 
@@ -44,13 +44,13 @@ RSpec.describe Api::ConversationsController, type: :controller do
       chat = create :conversation
       create :participation, user: current_user, conversation: chat
       create :participation, user: recipient, conversation: chat
-      expect { post :create, params: { conversation: { to: recipient.name } } }
+      expect { post :create, params: { to: recipient.name } }
         .not_to change { Conversation.count }
       expect(response).to have_http_status :bad_request
     end
 
     it 'creates a conversation between two users' do
-      post :create, params: { conversation: { to: recipient.name } }
+      post :create, params: { to: recipient.name }
       expect(Conversation.find(json['id']).participations.count).to eq 2
     end
   end
