@@ -13,6 +13,16 @@ RSpec.describe Api::ConversationsController, type: :controller do
       expect(json.map { |c| c['id'] }).to include my_chat.id
       expect(json.map { |c| c['id'] }).not_to include other_chat.id
     end
+
+    it 'includes participant details' do
+      conversation = create :conversation
+      other_user = create :user
+      create :participation, user: current_user, conversation: conversation
+      create :participation, user: other_user, conversation: conversation
+      get :index
+      expect(json.first['users'].map { |u| u['id'] }).to include current_user.id
+      expect(json.first['users'].map { |u| u['id'] }).to include other_user.id
+    end
   end
 
   describe '#create' do
