@@ -23,6 +23,24 @@ RSpec.describe Api::ConversationsController, type: :controller do
       expect(json.first['users'].map { |u| u['id'] }).to include current_user.id
       expect(json.first['users'].map { |u| u['id'] }).to include other_user.id
     end
+
+    describe 'unread status' do
+      let(:conversation) { create :conversation }
+      before do
+        create :participation, user: current_user, conversation: conversation, read_at: Time.zone.now
+      end
+
+      it 'identifies read conversations' do
+        get :index
+        expect(json.first['unread']).to eq false
+      end
+
+      it 'identifies unread conversations' do
+        conversation.touch
+        get :index
+        expect(json.first['unread']).to eq true
+      end
+    end
   end
 
   describe '#create' do

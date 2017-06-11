@@ -1,5 +1,6 @@
 class ApiController < ApplicationController
   before_action :require_user
+  serialization_scope nil
 
   class NotAuthorizedError < StandardError; end
 

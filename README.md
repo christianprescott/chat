@@ -6,7 +6,7 @@
 [x] Create conversation with another user
 [x] List messages in conversation
 [x] Create messages in conversation
-[ ] Read status
+[x] Read status
 [ ] Announcements
 [ ] Multiple participants
 

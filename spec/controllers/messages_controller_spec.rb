@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::MessagesController, type: :controller do
-  let(:conversation) { create :conversation }
+  let(:conversation) { create :conversation, created_at: 3.hours.ago }
 
   describe '#index' do
     it 'responds 404 if the user is not a participant in conversation' do
@@ -26,6 +26,15 @@ RSpec.describe Api::MessagesController, type: :controller do
       get :index, params: { conversation_id: conversation.id }
       expect(json.map { |c| c['id'] }).to eq [third.id, second.id, first.id]
     end
+
+    it 'updates participant read_at' do
+      participation = create :participation, user: current_user, conversation: conversation, read_at: 30.minutes.ago
+      # Time#round to match precision lost in roundtrip to db
+      Timecop.freeze(Time.zone.now.round) do
+        get :index, params: { conversation_id: conversation.id }
+        expect(participation.reload.read_at).to eq Time.zone.now.round
+      end
+    end
   end
 
   describe '#create' do
@@ -40,6 +49,22 @@ RSpec.describe Api::MessagesController, type: :controller do
       message = conversation.messages.order(created_at: :desc).first
       expect(message.body).to eq 'shiny new message'
       expect(message.user).to eq current_user
+    end
+
+    it 'updates conversation updated_at' do
+      create :participation, user: current_user, conversation: conversation
+      Timecop.freeze(Time.zone.now.round) do
+        post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+        expect(conversation.reload.updated_at).to eq Time.zone.now.round
+      end
+    end
+
+    it 'updates participant read_at' do
+      participation = create :participation, user: current_user, conversation: conversation, read_at: 30.minutes.ago
+      Timecop.freeze(Time.zone.now.round) do
+        post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+        expect(participation.reload.read_at).to eq Time.zone.now.round
+      end
     end
   end
 end

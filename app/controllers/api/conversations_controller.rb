@@ -1,12 +1,12 @@
 class Api::ConversationsController < ApiController
   def index
-    render json: current_user.conversations, include: [:users]
+    render json: current_user.conversations.includes(:users).include_unread
   end
 
   def create
     # The need to create conversation before creating messages is a little
     # awkward, even if the client hides it in UX. I don't mind bending the
-    # "rules" of REST to make things transactional. Another approach might
+    # "rules" of REST to make things transactional, so another approach might
     # be shallow routes on MessagesController to find_or_create the
     # conversation.
 
