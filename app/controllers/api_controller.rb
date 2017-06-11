@@ -7,14 +7,22 @@ class ApiController < ApplicationController
     render json: { error: e.message }, status: :unauthorized
   end
 
+  rescue_from ActionController::ParameterMissing, ActionController::BadRequest do |e|
+    render json: { error: e.message }, status: :bad_request
+  end
+
   def current_user
-    User.find_or_create_by!(name: params[:username])
+    User.find_or_create_by!(name: current_username)
   end
 
   private
 
+  def current_username
+    params[:username]
+  end
+
   def require_user
     # TODO: authorization
-    raise NotAuthorizedError, 'username is required' unless params[:username].present?
+    raise NotAuthorizedError, 'username is required' unless current_username.present?
   end
 end
