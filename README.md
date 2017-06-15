@@ -8,7 +8,23 @@
 [x] Create messages in conversation
 [x] Read status
 [ ] Announcements
+    This is a feature I'd really like to see in the product. It's a little
+    jarring to see messages auto-sent from buyer and seller when a sale is made.
+    Good fit for single table inheritance, allowing automated messages from
+    neither participant or from moderators.
 [ ] Multiple participants
+    The pieces are all there. Group chat is only a controller change away.
+[ ] Paginate collection endpoints
+
+Regret not choosing names "thread" and "member" instead of "conversation" and
+"participation."
+Payloads are minimal - without more endpoints, relies on client to keep some
+state to denormalize things like participating users.
+Many-to-many participants makes for more expensive queries in some places but
+enables lots of features that would be difficult to implement without it. see:
+read receipts and group chat. It's a good fit for the product in question, for a
+more spastic chat app would need to consider backgrounding or caching in those
+places.
 
 ## Getting Started
 
