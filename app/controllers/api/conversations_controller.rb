@@ -1,6 +1,7 @@
 class Api::ConversationsController < ApiController
   def index
-    render json: current_user.conversations.includes(:users).include_unread
+    # TODO: index on updated_at
+    render json: current_user.conversations.includes(:users).include_unread.order(updated_at: :desc)
   end
 
   def create
