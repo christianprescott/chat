@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::MessagesController, type: :controller do
-  let(:conversation) { create :conversation, created_at: 3.hours.ago }
+  let_once(:conversation) { create :conversation, created_at: 3.hours.ago }
 
   describe '#index' do
     it 'responds 404 if the user is not a participant in conversation' do
@@ -38,14 +38,21 @@ RSpec.describe Api::MessagesController, type: :controller do
   end
 
   describe '#create' do
+    let_once(:message_params) do
+      {
+        conversation_id: conversation.id,
+        message: { body: 'shiny new message' }
+      }
+    end
+
     it 'responds 404 if the user is not a participant in conversation' do
-      post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+      post :create, params: message_params
       expect(response).to have_http_status :not_found
     end
 
     it 'creates message' do
       create :participation, user: current_user, conversation: conversation
-      post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+      post :create, params: message_params
       message = conversation.messages.order(created_at: :desc).first
       expect(message.body).to eq 'shiny new message'
       expect(message.user).to eq current_user
@@ -54,7 +61,7 @@ RSpec.describe Api::MessagesController, type: :controller do
     it 'updates conversation updated_at' do
       create :participation, user: current_user, conversation: conversation
       Timecop.freeze(Time.zone.now.round) do
-        post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+        post :create, params: message_params
         expect(conversation.reload.updated_at).to eq Time.zone.now.round
       end
     end
@@ -62,7 +69,7 @@ RSpec.describe Api::MessagesController, type: :controller do
     it 'updates participant read_at' do
       participation = create :participation, user: current_user, conversation: conversation, read_at: 30.minutes.ago
       Timecop.freeze(Time.zone.now.round) do
-        post :create, params: { conversation_id: conversation.id, message: { body: 'shiny new message' } }
+        post :create, params: message_params
         expect(participation.reload.read_at).to eq Time.zone.now.round
       end
     end
